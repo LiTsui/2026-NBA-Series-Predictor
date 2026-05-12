@@ -1,18 +1,19 @@
 import pandas as pd
 
+'''
+Use to compare stats in every single one of the playoffs
+'''
+
 def make_seed_matchup(playoff, conf, top_seed, low_seed):
-    team1 = playoff[playoff['Conference'].str.contains(conf) & (playoff['PlayoffRank'] == top_seed)]
+    team1 = playoff[playoff['Conference'].str.contains(conf) & (playoff['PlayoffRank'] == top_seed)].iloc[0]
     team2 = playoff[playoff['Conference'].str.contains(conf) & (playoff['PlayoffRank'] == low_seed)].iloc[0]
 
-    #print(team1.to_string(index=False))
-    #print(team2.to_string())
-
-    row = pd.DataFrame({
+    row = {
         'TEAM_NAME_HIGHER': team1['TEAM_NAME'],
         'TEAM_NAME_LOWER': team2['TEAM_NAME'],
         'CONFERENCE': conf,
-        'RANK_HIGHER': team1['PlayoffRank'],
-        'RANK_LOWER': team2['PlayoffRank'],
+        'SEED_HIGHER': team1['PlayoffRank'],
+        'SEED_LOWER': team2['PlayoffRank'],
         'PointsPG_DIFF' : team1['PointsPG'] - team2['PointsPG'],
         'OppPointsPG_DIFF': team1['OppPointsPG'] - team2['OppPointsPG'],
         'DiffPointsPG_DIFF': team1['DiffPointsPG'] - team2['DiffPointsPG'],
@@ -34,11 +35,9 @@ def make_seed_matchup(playoff, conf, top_seed, low_seed):
         'E_PACE_DIFF': team1['E_PACE'] - team2['E_PACE'],
         'PACE_DIFF': team1['PACE'] - team2['PACE'],
         'PIE_DIFF': team1['PIE'] - team2['PIE'],
-    })
+    }
 
-    #print(row.to_string(index=False))
-
-    return pd.DataFrame(row)
+    return pd.DataFrame([row])
 
 def build_round_matchups(playoff, round_name):
     rows = pd.DataFrame()
@@ -68,12 +67,14 @@ def build_next_round(playoff):
     None
 
 def main():
-    matchups = pd.read_csv('/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/processed/matchups_25_26.csv')
-    playoff = pd.read_csv('/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/processed/playoff_25_26.csv')
+    for i in range(1996, 2026):
+        season = f'{str(i)[-2:]}_{str(i + 1)[-2:]}' # follow format 00_01, 09_10
+        print(f'Creating Matchup Data for {i}-{str(i + 1)[-2:]}')
+        playoff = pd.read_csv(f'/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/processed/playoff/playoff_{season}.csv')
+        round1_matchups = build_round_matchups(playoff, 'round1')
+        round1_matchups.to_csv(f'/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/processed/round1_matchups/round1_matchups_{season}.csv', index=False)
 
-    final_matchups = build_round_matchups(playoff, 'round1')
-
-    print(final_matchups.to_string(index=False))
+        print(round1_matchups.to_string(index=False))
 
 if __name__ == "__main__":
     main()

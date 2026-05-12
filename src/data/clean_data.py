@@ -1,7 +1,13 @@
 import pandas as pd
+import src.utils as helpers
+import time
 
-#creates the playoffs file
-def clean_standings(standings, team_stats):
+'''
+Use to clean data in every single one of the playoffs
+'''
+
+#creates the playoffs file where there is the standings of each playoff team
+def clean_standings(standings, team_stats, season):
     #merge rows if they have common TeamID/TEAM_ID
     playoff = standings.merge(
         team_stats,
@@ -10,12 +16,53 @@ def clean_standings(standings, team_stats):
         how="inner"
     )
 
-    #keep only the 16 playoff teams
-    playoff = playoff[0:16]
+    # note that nba started using play-in tournament in 2019-20 so some PlayoffRanks need to be changed
+    if season == '21_22':
+        playoff.loc[14,'PlayoffRank'] = 9 #change Cleveland Cavaliers to 9th seed
+        playoff.loc[15, 'PlayoffRank'] = 9 #change Los Angeles Clippers to 9th seed
+        playoff.loc[16,'PlayoffRank'] = 8 #change Atlanta Hawks to 8th seed
+        playoff.loc[17, 'PlayoffRank'] = 8 #change New Orleans Pelicans to 8th seed
+    if season == '22_23':
+        playoff.loc[12, 'PlayoffRank'] = 8  # change Miami Heat to 8th seed
+        playoff.loc[14, 'PlayoffRank'] = 7  # change Atlanta Hawks to 7th seed
+    if season == '23_24':
+        playoff.loc[12, 'PlayoffRank'] = 8  # change New Orleans Pelicans to 8th seed
+        playoff.loc[14, 'PlayoffRank'] = 7  # change Los Angeles Lakers to 7th seed
+    if season == '24_25':
+        playoff.loc[19, 'PlayoffRank'] = 8  # change Miami Heat to 8th seed
+        playoff.loc[14, 'PlayoffRank'] = 10 # change Atlanta Hawks to 10th seed
+    if season == '25_26':
+        playoff.loc[15, 'PlayoffRank'] = 7  # change Portland Trail Blazers to 7th seed
+        playoff.loc[13, 'PlayoffRank'] = 8  # change Phoenix Suns to 8th seed
 
-    #correct the ranks
-    playoff.iloc[15,7] = 7 #change Portland Trail Blazers to 7th seed
-    playoff.iloc[13,7] = 8 #change Phoenix Suns to 8th seed
+    # some of the old data from 1996 to 2001 has incorrect PlayoffRank
+    if season == '96_97':
+        playoff.loc[2,'PlayoffRank'] = 3 #change Houston Rockets to 3rd seed
+        playoff.loc[10, 'PlayoffRank'] = 6 #change Charlotte Hornets to 6th seed
+        playoff.loc[12,'PlayoffRank'] = 7 #change Phoenix Suns to 7th seed
+    if season == '97_98':
+        playoff.loc[4,'PlayoffRank'] = 3 #change Los Angeles Lakers to 3rd seed
+        playoff.loc[6, 'PlayoffRank'] = 5 #change San Antonio Spurs to 5th seed
+        playoff.loc[14,'PlayoffRank'] = 8 #change New Jersey Nets to 8th seed
+    if season == '98_99':
+        playoff.loc[1,'PlayoffRank'] = 3 #change Orlando Magic to 3rd seed
+        playoff.loc[2, 'PlayoffRank'] = 2 #change Indiana Pacers to 2nd seed
+        playoff.loc[4,'PlayoffRank'] = 3 #change Utah Jazz to 3rd seed
+        playoff.loc[5, 'PlayoffRank'] = 2  # change Portland Trail Blazers to 2nd seed
+        playoff.loc[8, 'PlayoffRank'] = 5  # change Houston Rockets to 5th seed
+        playoff.loc[11, 'PlayoffRank'] = 7  # change Milwaukee Bucks to 7th seed
+        playoff.loc[13, 'PlayoffRank'] = 7  # change Phoenix Suns to 7th seed
+        playoff.loc[16, 'PlayoffRank'] = 9  # change Seattle Supersonics to 9th seed
+    if season == '99_00':
+        playoff.loc[6,'PlayoffRank'] = 5 #change Philadelphia 76ers to 5th seed
+        playoff.loc[7, 'PlayoffRank'] = 5 #change Phoenix Suns to 5th seed
+        playoff.loc[12,'PlayoffRank'] = 8 #change Milwaukee Bucks to 8th seed
+    if season == '00_01':
+        playoff.loc[6,'PlayoffRank'] = 5 #change Dallas Mavericks to 5th seed
+
+    #keep only the 16 playoff teams
+    seed = [1,2,3,4,5,6,7,8]
+    playoff = playoff[playoff['PlayoffRank'].isin(seed)]
 
     #remove redundant or insignificant stats
     playoff = playoff.drop(columns=['TEAM_ID', 'GP', 'W', 'L', 'W_PCT', 'EliminatedConference',
@@ -24,53 +71,25 @@ def clean_standings(standings, team_stats):
 
     return playoff
 
-#creates the matchups file
-def clean_matchups(game_logs, playoff):
-    #split dataframe into home and away teams
-    away_df = game_logs[game_logs["MATCHUP"].str.contains("@")].copy()
-    home_df = game_logs[game_logs["MATCHUP"].str.contains("vs.")].copy()
-
-    #extract abbreviations of the opponent for each row
-    away_df["OPP_ABBR"] = away_df["MATCHUP"].str.split().str[-1]
-    home_df["OPP_ABBR"] = home_df["MATCHUP"].str.split().str[-1]
-
-    #combine the home and away dataframes
-    matchups = home_df.merge(
-        away_df,
-        left_on=["GAME_DATE", "OPP_ABBR", "TEAM_ABBREVIATION"],
-        right_on=["GAME_DATE", "TEAM_ABBREVIATION", "OPP_ABBR"],
-        suffixes=("_HOME", "_AWAY")
-    )
-
-    #remove teams that are not in the 2025-26 NBA playoffs
-    matchups = matchups[
-        matchups["TEAM_NAME_HOME"].isin(playoff["TEAM_NAME"]) &
-        matchups["TEAM_NAME_AWAY"].isin(playoff["TEAM_NAME"])
-    ]
-
-    return matchups
-
+# clean data
 def main():
-    #team standings queried from nba api
-    standings = pd.read_csv('raw/standings_25_26.csv')
+    for i in range(1996, 2026):
+        season = f'{str(i)[-2:]}_{str(i + 1)[-2:]}' # follow format 00_01, 09_10
+        print(f'Cleaning Data for {i}-{str(i + 1)[-2:]}')
 
-    #team stats queried from nba api
-    team_stats = pd.read_csv('raw/team_stats_25_26.csv')
+        standings = pd.read_csv(f'/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/raw/standings/standings_{season}.csv')
+        team_stats = pd.read_csv(f'/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/raw/team_stats/team_stats_{season}.csv')
+        game_logs = pd.read_csv(f'/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/raw/game_logs/game_logs_{season}.csv')
 
-    #game logs
-    game_logs = pd.read_csv('raw/game_logs_25_26.csv')
+        playoff = clean_standings(standings, team_stats, season)
+        matchups = helpers.clean_matchups(game_logs, playoff)
 
-    playoff = clean_standings(standings, team_stats)
-    matchups = clean_matchups(game_logs, playoff)
+        playoff.to_csv(f'/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/processed/playoff/playoff_{season}.csv', index=False)
+        matchups.to_csv(f'/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/processed/regular_season_matchups/regular_season_matchups_{season}.csv', index=False)
 
-    playoff.to_csv('processed/playoff_25_26.csv', index=False)
-    matchups.to_csv('processed/matchups_25_26.csv', index=False)
+        print('Data cleaned successfully')
 
-    print('Data cleaned')
-
-    # print dataframes for debugging
-    print(playoff.to_string(index=False))
-    print(matchups.to_string(index=False))
+        time.sleep(5)  # necessary to avoid time out
 
 if __name__ == "__main__":
     main()
