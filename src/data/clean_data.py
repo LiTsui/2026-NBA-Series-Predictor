@@ -30,17 +30,18 @@ def clean_standings(standings, team_stats, season):
         playoff.loc[19, "PlayoffRank"] = 8  # change Miami Heat to 8th seed
         playoff.loc[15, "PlayoffRank"] = 10  # change Atlanta Hawks to 10th seed
     if season == "25_26":
-        playoff.loc[15, "PlayoffRank"] = 7  # change Portland Trail Blazers to 7th seed
-        playoff.loc[13, "PlayoffRank"] = 8  # change Phoenix Suns to 8th seed
+        playoff.loc[14, "PlayoffRank"] = 7  # change Portland Trail Blazers to 7th seed
+        playoff.loc[12, "PlayoffRank"] = 8  # change Phoenix Suns to 8th seed
 
     # old data from 1996 to 2001 has incorrect PlayoffRank
     if season == "96_97":
         playoff.loc[2, "PlayoffRank"] = 3  # change Houston Rockets to 3rd seed
         playoff.loc[10, "PlayoffRank"] = 6  # change Charlotte Hornets to 6th seed
-        playoff.loc[12, "PlayoffRank"] = 7  # change Phoenix Suns to 7th seed
+        playoff.loc[11, "PlayoffRank"] = 7  # change Phoenix Suns to 7th seed
     if season == "97_98":
-        playoff.loc[4, "PlayoffRank"] = 3  # change Los Angeles Lakers to 3rd seed
-        playoff.loc[6, "PlayoffRank"] = 5  # change San Antonio Spurs to 5th seed
+        print(playoff.to_string())
+        playoff.loc[2, "PlayoffRank"] = 3  # change Los Angeles Lakers to 3rd seed
+        playoff.loc[7, "PlayoffRank"] = 5  # change San Antonio Spurs to 5th seed
         playoff.loc[13, "PlayoffRank"] = 8  # change New Jersey Nets to 8th seed
     if season == "98_99":
         playoff.loc[1, "PlayoffRank"] = 3  # change Orlando Magic to 3rd seed
