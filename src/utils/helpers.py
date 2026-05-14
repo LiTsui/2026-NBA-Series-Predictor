@@ -23,6 +23,3 @@ def clean_matchups(game_logs, playoff):
     ]
 
     return matchups
-
-def get_winner(high, low):
-    return high
