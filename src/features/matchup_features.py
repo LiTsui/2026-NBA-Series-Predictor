@@ -297,18 +297,18 @@ def main():
         )
 
         # preserve which data points are from which seasons
-        matchup_data['SEASON'] = season
+        matchup_data["SEASON"] = season
 
         if i in range(1996, 2019):
-            print(f'Adding {season} to Training Data')
+            print(f"Adding {season} to Training Data")
             training_df = pd.concat([training_df, matchup_data])
 
         if i in range(2019, 2021):
-            print(f'Adding {season} to Validation Data')
+            print(f"Adding {season} to Validation Data")
             valid_df = pd.concat([valid_df, matchup_data])
 
         if i in range(2021, 2026):
-            print(f'Adding {season} to Test Data')
+            print(f"Adding {season} to Test Data")
             test_df = pd.concat([test_df, matchup_data])
 
         time.sleep(5)
