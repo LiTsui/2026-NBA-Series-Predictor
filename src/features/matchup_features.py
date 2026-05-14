@@ -150,6 +150,38 @@ def find_series_winner(x, cleaned_matchups):
         return team2
 
 
+def get_h2h_record(x, regular_season, find):
+
+    win = x["SERIES_WINNER"]
+    loss = x["SERIES_LOSER"]
+
+    h2h = regular_season[
+        (
+            (regular_season["TEAM_NAME_HOME"] == win)
+            & (regular_season["TEAM_NAME_AWAY"] == loss)
+        )
+        | (
+            (regular_season["TEAM_NAME_HOME"] == loss)
+            & (regular_season["TEAM_NAME_AWAY"] == win)
+        )
+    ]
+
+    high_wins = (
+        ((h2h["TEAM_NAME_HOME"] == win) & (h2h["WL_HOME"] == "W"))
+        | ((h2h["TEAM_NAME_AWAY"] == win) & (h2h["WL_AWAY"] == "W"))
+    ).sum()
+
+    low_wins = (
+        ((h2h["TEAM_NAME_HOME"] == loss) & (h2h["WL_HOME"] == "W"))
+        | ((h2h["TEAM_NAME_AWAY"] == loss) & (h2h["WL_AWAY"] == "W"))
+    ).sum()
+
+    if find == "w":
+        return high_wins
+    else:
+        return low_wins
+
+
 def main():
     training_df = pd.DataFrame()
     valid_df = pd.DataFrame()
@@ -291,6 +323,19 @@ def main():
 
         # print(matchup_data.to_string(index=False))
 
+        regular_season = pd.read_csv(
+            f"../data/processed/regular_season_matchups/regular_season_matchups_{read_season}.csv"
+        )
+
+        matchup_data["SERIES_WINNER_H2H_WINS"] = matchup_data.apply(
+            get_h2h_record, axis=1, regular_season=regular_season, find="w"
+        )
+        matchup_data["SERIES_LOSER_H2H_WINS"] = matchup_data.apply(
+            get_h2h_record, axis=1, regular_season=regular_season, find="l"
+        )
+
+        # print(matchup_data.to_string())
+
         matchup_data.to_csv(
             f"../data/processed/playoff_history_cleaned/playoff_history_cleaned_{read_season}.csv",
             index=False,
@@ -313,9 +358,9 @@ def main():
 
         time.sleep(5)
 
-    print(training_df.to_string())
-    print(valid_df.to_string())
-    print(test_df.to_string())
+    # print(training_df.to_string())
+    # print(valid_df.to_string())
+    # print(test_df.to_string())
 
     training_df.to_csv(f"../data/training.csv")
     valid_df.to_csv(f"../data/validation.csv")
