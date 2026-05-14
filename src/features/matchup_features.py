@@ -3,7 +3,7 @@ import pandas as pd
 import time
 
 """
-Combine statistical data in every playoff series and indicates which team won which series from 1996 to 2025. (Existing data to train off of) 
+Combine statistical data in every playoff series and indicates which team won which series from 1996 to 2025. 
 Note: The 2025-2026 playoffs are what is to be predicted.
 """
 
@@ -151,6 +151,10 @@ def find_series_winner(x, cleaned_matchups):
 
 
 def main():
+    training_df = pd.DataFrame()
+    valid_df = pd.DataFrame()
+    test_df = pd.DataFrame()
+
     for i in range(1996, 2025):
         season = f"{i}-{str(i + 1)[-2:]}"  # follow format 1996-97
         read_season = (
@@ -292,7 +296,30 @@ def main():
             index=False,
         )
 
+        # preserve which data points are from which seasons
+        matchup_data['SEASON'] = season
+
+        if i in range(1996, 2019):
+            print(f'Adding {season} to Training Data')
+            training_df = pd.concat([training_df, matchup_data])
+
+        if i in range(2019, 2021):
+            print(f'Adding {season} to Validation Data')
+            valid_df = pd.concat([valid_df, matchup_data])
+
+        if i in range(2021, 2026):
+            print(f'Adding {season} to Test Data')
+            test_df = pd.concat([test_df, matchup_data])
+
         time.sleep(5)
+
+    print(training_df.to_string())
+    print(valid_df.to_string())
+    print(test_df.to_string())
+
+    training_df.to_csv(f"../data/training.csv")
+    valid_df.to_csv(f"../data/validation.csv")
+    test_df.to_csv(f"../data/testing.csv")
 
 
 if __name__ == "__main__":

@@ -7,12 +7,16 @@ Created data comparisons based on matchups
 
 > **Update: May 13, 2026** <br>
 Overhauled the team statistics comparison system based on existing playoff series data <br/>
-
+Partitioned datasets into training, validation, and testing data for model training. 
 ---
 
 ### **Project Overview**  
 The NBA Series Predictor uses historical playoff game data and regular season team statistics to create matchup features and train a model capable of predicting which team will win the 2025-2026 playoffs. The model will only use playoff data starting from 1996 since 1996 was the start of the "play by play era"; an era in which real-time statistics are measured game by game. 
 
+The data has been partitioned into three datasets for model training. 
+- The validation dataset will use matchups from 1996 - 2019
+- The testing dataset will use matchups from 2020 and 2021
+- The testing dataset will use matchups from 2022 - 2025
 > Note: In it's current state, the data has been processed for model training.
 
 ---
@@ -64,6 +68,18 @@ The league's teams have changed several times until 2014 so playoff data from 19
 - Philadelphia 76ers
 - Toronto Raptors
 - Washington Wizards 
+
+---
+
+### **Phase 1: Using Pandas to parse data from the NBA API**
+
+---
+
+### **Phase 2: Using PyTorch to create a Model**
+
+---
+
+### **Phase 3: Model Training and Tuning**
 
 ---
 

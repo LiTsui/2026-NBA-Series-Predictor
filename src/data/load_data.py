@@ -1,8 +1,4 @@
-from nba_api.stats.endpoints import (
-    leaguestandings,
-    leaguedashteamstats,
-    leaguegamefinder,
-)
+from nba_api.stats.endpoints import leaguestandings, leaguedashteamstats, leaguegamefinder
 import time
 
 """
