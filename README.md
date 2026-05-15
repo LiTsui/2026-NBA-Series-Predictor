@@ -11,7 +11,11 @@ Partitioned datasets into training, validation, and testing data for model train
 
 > **Update: May 14, 2026** <br>
 Created the first iteration of the neural network <br>
-Achieved an average of 70% accuracy on validation data
+Achieved an average 70% accuracy on validation data
+
+> **Update: May 15, 2026** <br>
+Implemented helper functions to find dropout and neuron counts <br>
+Achieved an average 90% accuracy on testing data
 
 ---
 
@@ -20,8 +24,8 @@ The NBA Series Predictor uses historical playoff game data and regular season te
 
 The data has been partitioned into three datasets for model training. 
 - The training dataset will use matchups from 1996 - 2019
-- The validation dataset will use matchups from 2020 and 2021
-- The testing dataset will use matchups from 2022 - 2025
+- The validation dataset will use matchups from 2020 - 2022
+- The testing dataset will use matchups from 2023 - 2025
 > Note: In it's current state, the data has been processed for model training.
 
 ---
@@ -84,7 +88,15 @@ The league's teams have changed several times until 2014 so playoff data from 19
 
 ---
 
-### **Phase 3: Model Training and Tuning**
+### **Phase 3: Model Training and Validation Tuning**
+
+---
+
+### **Phase 4: Model Testing**
+
+---
+
+### **Phase 5: Predicting the 2026 NBA PLayoffs**
 
 ---
 

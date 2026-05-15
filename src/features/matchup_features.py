@@ -1,4 +1,4 @@
-from src.utils import helpers
+from src.utils import h
 import pandas as pd
 import time
 
@@ -8,8 +8,8 @@ Note: The 2025-2026 playoffs are what is to be predicted.
 """
 
 
-# compares the stats between teams in previous playoff matchups with top_seed - bottom_seed
-def make_seed_matchup(x, playoff):
+# compares the stats between teams in previous playoff matchups with winner - loser to reflect labels
+def make_matchup(x, playoff):
     stat = [
         "PointsPG",
         "OppPointsPG",
@@ -34,18 +34,18 @@ def make_seed_matchup(x, playoff):
         "PIE",
     ]
 
-    # get the nams for the top and bottom seeds in the row
-    high_name = find_seed(x, y="higher")
-    low_name = find_seed(x, y="lower")
+    # get the name for the winner and loser of each series
+    winner = find_winner_or_loser_series(x, y="W")
+    loser = find_winner_or_loser_series(x, y="L")
 
     # gets the statistical data of each playoff team for that season
-    high = playoff.loc[playoff["TEAM_NAME"] == high_name].iloc[0]
-    low = playoff.loc[playoff["TEAM_NAME"] == low_name].iloc[0]
+    win = playoff.loc[playoff["TEAM_NAME"] == winner].iloc[0]
+    lose = playoff.loc[playoff["TEAM_NAME"] == loser].iloc[0]
 
     # each column contains the difference between the higher seed and lower seed's stats for each playoff matchup
     d = {}
     for col in stat:
-        d[f"{col}_DIFF"] = high[col] - low[col]
+        d[f"{col}_DIFF"] = win[col] - lose[col]
 
     return pd.Series(d)
 
@@ -77,12 +77,20 @@ def find_seed(x, y):
     return None
 
 
-# find winner or loser of a series depending on find
-def find_winner_or_loser(x, find):
-    if x["WL_HOME"] == find:
+# find winner or loser of a game depending on find
+def find_winner_or_loser_game(x, y):
+    if x["WL_HOME"] == y:
         return x["TEAM_NAME_HOME"]
     else:
         return x["TEAM_NAME_AWAY"]
+
+
+# find winner or loser of a series depending on find
+def find_winner_or_loser_series(x, y):
+    if y == 'W':
+        return x["SERIES_WINNER"]
+    else:
+        return x["SERIES_LOSER"]
 
 
 # finds an element of each team in each matchup depending on find
@@ -203,14 +211,14 @@ def main():
             f"../data/processed/playoff_teams/playoff_teams_{read_season}.csv"
         )
 
-        cleaned_matchups = helpers.clean_matchups(games, playoff)
+        cleaned_matchups = h.clean_matchups(games, playoff)
 
         # find winner and loser of each game and use that to find the winner of each series
         cleaned_matchups["WINNER"] = cleaned_matchups.apply(
-            find_winner_or_loser, axis=1, find="W"
+            find_winner_or_loser_game, axis=1, y="W"
         )
         cleaned_matchups["LOSER"] = cleaned_matchups.apply(
-            find_winner_or_loser, axis=1, find="L"
+            find_winner_or_loser_game, axis=1, y="L"
         )
         cleaned_matchups["SERIES_WINNER"] = cleaned_matchups.apply(
             find_series_winner, axis=1, cleaned_matchups=cleaned_matchups
@@ -318,10 +326,10 @@ def main():
 
         # print(matchup_data.to_string(index=False))
 
-        stats = matchup_data.apply(make_seed_matchup, axis=1, playoff=playoff)
+        stats = matchup_data.apply(make_matchup, axis=1, playoff=playoff)
         matchup_data = matchup_data.join(stats)
 
-        # print(matchup_data.to_string(index=False))
+        # print(matchup_data.to_string())
 
         regular_season = pd.read_csv(
             f"../data/processed/regular_season_matchups/regular_season_matchups_{read_season}.csv"
@@ -333,8 +341,6 @@ def main():
         matchup_data["SERIES_LOSER_H2H_WINS"] = matchup_data.apply(
             get_h2h_record, axis=1, regular_season=regular_season, find="l"
         )
-
-        # print(matchup_data.to_string())
 
         # calculate h2h win ratio
         matchup_data["H2H_WIN_RATIO"] = matchup_data["SERIES_WINNER_H2H_WINS"] / (
@@ -353,11 +359,11 @@ def main():
             print(f"Adding {season} to Training Data")
             train_df = pd.concat([train_df, matchup_data])
 
-        if i in range(2019, 2021):
+        if i in range(2019, 2022):
             print(f"Adding {season} to Validation Data")
             valid_df = pd.concat([valid_df, matchup_data])
 
-        if i in range(2021, 2026):
+        if i in range(2022, 2026):
             print(f"Adding {season} to Test Data")
             test_df = pd.concat([test_df, matchup_data])
 
