@@ -1,3 +1,5 @@
+scikit-learn
+torch
 pandas
 pytorch
 nba api 

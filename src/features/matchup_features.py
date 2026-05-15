@@ -183,7 +183,7 @@ def get_h2h_record(x, regular_season, find):
 
 
 def main():
-    training_df = pd.DataFrame()
+    train_df = pd.DataFrame()
     valid_df = pd.DataFrame()
     test_df = pd.DataFrame()
 
@@ -336,17 +336,22 @@ def main():
 
         # print(matchup_data.to_string())
 
+        # calculate h2h win ratio
+        matchup_data["H2H_WIN_RATIO"] = matchup_data["SERIES_WINNER_H2H_WINS"] / (
+                matchup_data["SERIES_WINNER_H2H_WINS"] + matchup_data["SERIES_LOSER_H2H_WINS"] + 1e-6
+        )
+
+        # preserve which data points are from which seasons for analysis
+        matchup_data["SEASON"] = season
+
         matchup_data.to_csv(
             f"../data/processed/playoff_history_cleaned/playoff_history_cleaned_{read_season}.csv",
             index=False,
         )
 
-        # preserve which data points are from which seasons
-        matchup_data["SEASON"] = season
-
         if i in range(1996, 2019):
             print(f"Adding {season} to Training Data")
-            training_df = pd.concat([training_df, matchup_data])
+            train_df = pd.concat([train_df, matchup_data])
 
         if i in range(2019, 2021):
             print(f"Adding {season} to Validation Data")
@@ -362,9 +367,20 @@ def main():
     # print(valid_df.to_string())
     # print(test_df.to_string())
 
-    training_df.to_csv(f"../data/training.csv")
-    valid_df.to_csv(f"../data/validation.csv")
-    test_df.to_csv(f"../data/testing.csv")
+    # assign labels (binary classifier) where 1 means the higher seed won and 0 means the lower seed won
+    train_df["LABEL"] = train_df.apply(
+        lambda x: 1 if x["HIGHER_SEED"] == x["SERIES_WINNER"] else 0, axis=1
+    )
+    valid_df["LABEL"] = valid_df.apply(
+        lambda x: 1 if x["HIGHER_SEED"] == x["SERIES_WINNER"] else 0, axis=1
+    )
+    test_df["LABEL"] = test_df.apply(
+        lambda x: 1 if x["HIGHER_SEED"] == x["SERIES_WINNER"] else 0, axis=1
+    )
+
+    train_df.to_csv(f"../data/training.csv", index=False)
+    valid_df.to_csv(f"../data/validation.csv", index=False)
+    test_df.to_csv(f"../data/testing.csv", index=False)
 
 
 if __name__ == "__main__":
