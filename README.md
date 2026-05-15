@@ -15,7 +15,7 @@ Achieved an average 70% accuracy on validation data
 
 > **Update: May 15, 2026** <br>
 Implemented helper functions to find dropout and neuron counts <br>
-Achieved an average 90% accuracy on testing data
+Achieved an average 90% accuracy on testing data <br>
 
 ---
 
@@ -26,7 +26,6 @@ The data has been partitioned into three datasets for model training.
 - The training dataset will use matchups from 1996 - 2019
 - The validation dataset will use matchups from 2020 - 2022
 - The testing dataset will use matchups from 2023 - 2025
-> Note: In it's current state, the data has been processed for model training.
 
 ---
 
@@ -102,7 +101,7 @@ API stands for "Application Programming Interface." It is the online database th
 
 ---
 
-### **Phase 5: Predicting the 2026 NBA PLayoffs**
+### **Phase 5: Predicting the 2026 NBA Playoffs**
 
 ---
 
@@ -114,5 +113,5 @@ Injuries are also an integral part of the NBA Playoffs and therefore a player’
 ### **Extras**
 The raw and processed data have already been parsed for ease. If there is any corruption involved with the data, run `load_data.py`. Then run `clean_data.py`. Then `matchup_features.py`.
 
-It is also possible to predict playoff series in the future once data becomes available. If you want to do so, change the upper bound of the for loops in the main functions of `clean_data.py`, `load_data.py`, and `matchup_features.py`.
+It is also possible to predict playoff series several years from now once future data becomes available. If you want to do so, change the upper bound of the for loops in the main functions of `clean_data.py`, `load_data.py`, and `matchup_features.py`. Then run the files in that order.
 
