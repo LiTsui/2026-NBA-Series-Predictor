@@ -73,9 +73,12 @@ def find_neurons(train_loader, X_valid, y_valid):
 
 # helper function to compare predicted vs actual and the probability
 def actual_vs_pred(model, X_valid, y_valid, pred_val):
-    probs = model(X_valid).squeeze()
+    with torch.no_grad():
+        probs = torch.sigmoid(model(X_valid).squeeze())
+
     debug_df = pd.DataFrame()
     debug_df["LABEL"] = y_valid.squeeze().numpy()
     debug_df["PROB"] = probs.numpy()
     debug_df["PRED"] = pred_val.numpy()
+
     print(debug_df[["LABEL", "PRED", "PROB"]])
