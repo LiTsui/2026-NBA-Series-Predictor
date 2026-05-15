@@ -30,7 +30,7 @@ The data has been partitioned into three datasets for model training.
 
 ---
 
-### **Terminology**
+### **NBA Terminology**
 The matchups for the NBA Playoffs are of a best of 7 format (the first round was a best of 5 until 2002). The games played to win a best of 7 are called a series. Therefore winning one game does not mean winning the series entirely. 
 
 - **Seeds:** The rank of each team within their conference based on total wins during the regular season 
@@ -80,11 +80,17 @@ The league's teams have changed several times until 2014 so playoff data from 19
 
 ---
 
-### **Phase 1: Using Pandas to parse data from the NBA API**
+### **Machine Learning Terminology**
 
 ---
 
-### **Phase 2: Using PyTorch to create a Model**
+### **Phase 1: Parsing data from the NBA API**
+
+API stands for "Application Programming Interface." It is the online database that stores information regarding the NBA's teams and their playoff statistics.
+
+---
+
+### **Phase 2: Model Creation**
 
 ---
 
