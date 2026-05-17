@@ -20,6 +20,7 @@ Using the 80-10-10 rule:
 """
 
 
+# use training and validation data to train the model
 def train(model, train_loader, X_valid, y_valid):
     # loss function that combines BCE and sigmoid; compares actual label vs predicted label
     criterion = nn.BCEWithLogitsLoss()

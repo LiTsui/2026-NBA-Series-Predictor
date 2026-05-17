@@ -34,14 +34,63 @@ STATS = [
 ]
 
 playoff = pd.read_csv(
-    "/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/processed/playoff_teams/playoff_teams_25_26.csv"
+    "../NBA_Series_Predictor/src/data/processed/playoff_teams/playoff_teams_25_26.csv"
 )
 
 reg = pd.read_csv(
-    "/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/processed/regular_season_matchups/regular_season_matchups_25_26.csv"
+    "../NBA_Series_Predictor/src/data/processed/regular_season_matchups/regular_season_matchups_25_26.csv"
 )
 
 
+# create the first round matchups using data of the 16 playoff teams
+def create_rows(conf, i, i2):
+
+    test = []
+
+    df = playoff[
+        ((playoff["PlayoffRank"] == i) | (playoff["PlayoffRank"] == i2))
+        & (playoff["Conference"] == conf)
+    ]
+
+    match = {
+        "TEAM_HIGH_NAME": df.loc[df["PlayoffRank"] == i, "TEAM_NAME"].values[0],
+        "TEAM_LOW_NAME": df.loc[df["PlayoffRank"] == i2, "TEAM_NAME"].values[0],
+    }
+
+    for col in STATS:
+        high_val = df.loc[df["PlayoffRank"] == i, col].values[0]
+        low_val = df.loc[df["PlayoffRank"] == i2, col].values[0]
+        match[f"{col}_DIFF"] = high_val - low_val
+
+    # calculate h2h win ratio
+    high = df.loc[df["PlayoffRank"] == i, "TEAM_NAME"].values[0]
+    low = df.loc[df["PlayoffRank"] == i2, "TEAM_NAME"].values[0]
+
+    matchups = reg[
+        ((reg["TEAM_NAME_HOME"] == high) & (reg["TEAM_NAME_AWAY"] == low))
+        | ((reg["TEAM_NAME_HOME"] == low) & (reg["TEAM_NAME_AWAY"] == high))
+    ]
+
+    a_wins = len(
+        matchups[
+            ((matchups["TEAM_NAME_HOME"] == high) & (matchups["WL_HOME"] == "W"))
+            | ((matchups["TEAM_NAME_AWAY"] == high) & (matchups["WL_AWAY"] == "W"))
+        ]
+    )
+
+    match["H2H_WIN_RATIO"] = (a_wins / len(matchups)) if (a_wins / len(matchups)) > 0 else 0
+
+    test.append(match)
+
+    # preserve extra stats
+    match["CONF"] = conf
+    match["HIGH_SEED"] = i
+    match["LOW_SEED"] = i2
+
+    return pd.DataFrame(test)
+
+
+# simulate the match between two teams
 def sim(model, scaler, data, STATS, finals):
     data[STATS] = scaler.transform(data[STATS])
     X_test = h.convert(data, STATS)
@@ -87,7 +136,10 @@ def sim(model, scaler, data, STATS, finals):
     return data
 
 
+# reduce to only the teams that won the current round
 def reduce(teams, round):
+
+    # dataframe of all teams that won the round
     winners = pd.DataFrame()
     winners["WINNER"] = teams.apply(
         lambda x: x["TEAM_HIGH_NAME"] if x["LABEL"] == 1 else x["TEAM_LOW_NAME"], axis=1
@@ -109,55 +161,7 @@ def reduce(teams, round):
     return data
 
 
-def create_rows(conf, i, i2):
-
-    test = []
-
-    df = playoff[
-        ((playoff["PlayoffRank"] == i) | (playoff["PlayoffRank"] == i2))
-        & (playoff["Conference"] == conf)
-    ]
-
-    match = {
-        "TEAM_HIGH_NAME": df.loc[df["PlayoffRank"] == i, "TEAM_NAME"].values[0],
-        "TEAM_LOW_NAME": df.loc[df["PlayoffRank"] == i2, "TEAM_NAME"].values[0],
-    }
-
-    for col in STATS:
-        high_val = df.loc[df["PlayoffRank"] == i, col].values[0]
-        low_val = df.loc[df["PlayoffRank"] == i2, col].values[0]
-        match[f"{col}_DIFF"] = high_val - low_val
-
-    # calculate h2h win ratio
-    high = df.loc[df["PlayoffRank"] == i, "TEAM_NAME"].values[0]
-    low = df.loc[df["PlayoffRank"] == i2, "TEAM_NAME"].values[0]
-
-    matchups = reg[
-        ((reg["TEAM_NAME_HOME"] == high) & (reg["TEAM_NAME_AWAY"] == low))
-        | ((reg["TEAM_NAME_HOME"] == low) & (reg["TEAM_NAME_AWAY"] == high))
-    ]
-
-    a_wins = len(
-        matchups[
-            ((matchups["TEAM_NAME_HOME"] == high) & (matchups["WL_HOME"] == "W"))
-            | ((matchups["TEAM_NAME_AWAY"] == high) & (matchups["WL_AWAY"] == "W"))
-        ]
-    )
-
-    total = len(matchups)
-
-    match["H2H_WIN_RATIO"] = (a_wins / total) if (a_wins / total) > 0 else 0
-
-    test.append(match)
-
-    match["CONF"] = conf
-
-    match["HIGH_SEED"] = i
-    match["LOW_SEED"] = i2
-
-    return pd.DataFrame(test)
-
-
+# create accurate matchups for the next round
 def make_matchups(west, east, round):
     pairs = {}
     testing_data = pd.DataFrame()
@@ -184,6 +188,7 @@ def make_matchups(west, east, round):
             (5, 7),
         }
 
+    # makes sure both teams are correctly matched up for the next round based on seed and conference
     for pair in pairs:
         top, bot = pair
         if (top in west["WINNER_SEED"].values) & (bot in west["WINNER_SEED"].values):
@@ -199,6 +204,7 @@ def make_matchups(west, east, round):
     return testing_data
 
 
+# create the nba finals matchup
 def create_finals(east_winner, west_winner):
 
     east_wins = playoff.loc[playoff["TEAM_NAME"] == east_winner, "WINS"].values[0]
@@ -228,9 +234,10 @@ def create_finals(east_winner, west_winner):
             | ((matchups["TEAM_NAME_AWAY"] == high) & (matchups["WL_AWAY"] == "W"))
         ]
     )
-    total = len(matchups)
 
-    match["H2H_WIN_RATIO"] = (a_wins / total) if (a_wins / total) > 0 else 0
+    match["H2H_WIN_RATIO"] = (a_wins / len(matchups)) if (a_wins / len(matchups)) > 0 else 0
+
+    # preserve extra stats
     match["HIGH_SEED_CONF"] = high_stats["Conference"]
     match["LOW_SEED_CONF"] = low_stats["Conference"]
     match["HIGH_SEED"] = high
@@ -272,6 +279,8 @@ def main():
             "/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/model/best_model.pt"
         )
     )
+
+    # place model in evaluation mode
     model.eval()
 
     # load scaler to transform testing data
@@ -279,7 +288,7 @@ def main():
         "/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/model/scaler.pkl"
     )
 
-    # create the first round matchups and simulate the round
+    # first round
     teams = pd.DataFrame()
     for i in range(1, 5):
         teams = pd.concat(
@@ -290,19 +299,19 @@ def main():
     teams = sim(model, scaler, teams, STATS, False)
     # print(teams.to_string())
 
-    # create the conf semis matchups and simulate the round
+    # conference semifinals
     teams = reduce(teams, "Conf-Semis")
     print("---Conference Semifinals---")
     teams = sim(model, scaler, teams, STATS, False)
     # print(teams.to_string())
 
-    # create the conf finals matchups and simulate the round
+    # conference finals
     teams = reduce(teams, "Conf-Finals")
     print("---Conference Finals---")
     teams = sim(model, scaler, teams, STATS, False)
     # print(teams.to_string())
 
-    # create the nba finals matchup and simulate the round
+    # nba finals
     teams = reduce(teams, "Finals")
     print("---NBA Finals---")
     teams = sim(model, scaler, teams, STATS, True)
