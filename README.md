@@ -17,6 +17,9 @@ Achieved an average 70% accuracy on validation data
 Implemented helper functions to find dropout and neuron counts <br>
 Achieved an average 90% accuracy on testing data <br>
 
+> **Update: May 16, 2026** <br>
+Implemented the system to simulate each round of the 2026 NBA Playoffs
+
 ---
 
 ### **Project Overview**  
@@ -106,7 +109,9 @@ API stands for "Application Programming Interface." It is the online database th
 ---
 
 ### **Unaccounted Factors**
-Injuries are also an integral part of the NBA Playoffs and therefore a player’s individual impact is important to consider when predicting the outcome of a playoff series. However, due to the scale of this project, it is not plausible to assess every player’s impact on their team. It is also not plausible to predict which players would be injured. 
+Injuries are an integral part of the NBA Playoffs and therefore a player’s individual impact is important to consider when predicting the outcome of a playoff series. However, due to the scale of this project, it is not plausible to assess every player’s impact on their team. It is also not plausible to predict which players would be injured. 
+
+There are also instances where certain players may overperform or underperform during the playoffs compared to their regular season statistics.  A few examples would be Jimmy Butler while playing for the Miami Heat or James Harden.
 
 ---
 

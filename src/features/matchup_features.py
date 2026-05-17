@@ -158,6 +158,7 @@ def find_series_winner(x, cleaned_matchups):
         return team2
 
 
+# get regular season matchup records between two teams
 def get_h2h_record(x, regular_season, find):
 
     win = x["SERIES_WINNER"]

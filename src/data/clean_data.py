@@ -103,7 +103,7 @@ def main():
         playoff = clean_standings(standings, team_stats, season)
 
         # keeps all regular season matchups that involve playoff teams
-        matchups = helpers.clean_matchups(game_logs, playoff)
+        matchups = h.clean_matchups(game_logs, playoff)
 
         playoff.to_csv(
             f"../data/processed/playoff_teams/playoff_teams_{season}.csv",

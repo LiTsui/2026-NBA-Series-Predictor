@@ -1,5 +1,5 @@
 from src.utils import h
-from train_model import NeuralNet
+from src.models.neural_net import NeuralNet
 import pandas as pd
 import torch
 import joblib
