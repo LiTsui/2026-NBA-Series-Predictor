@@ -5,7 +5,8 @@ import joblib
 import torch
 
 """
-Create a file for parsing 2026 data that is readable for the model. Get the winner of first round playoff series and then create the matchups with those winners
+Parsing 2026 playoff data and make it readable for the model
+Get the winner of each playoff matchup including the NBA Finals 
 """
 
 
