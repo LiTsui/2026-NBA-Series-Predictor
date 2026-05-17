@@ -151,8 +151,8 @@ def reduce(teams, round):
     winners["CONF"] = teams["CONF"]
 
     if round == "Finals":
-        west = winners[winners["CONF"] == "West"].iloc[0, 0]
-        east = winners[winners["CONF"] == "East"].iloc[0, 0]
+        west = winners[winners["CONF"] == "West"].iloc[0]["WINNER"]
+        east = winners[winners["CONF"] == "East"].iloc[0]["WINNER"]
         data = create_finals(west, east)
     else:
         west = winners[winners["CONF"] == "West"]
@@ -174,7 +174,7 @@ def make_matchups(west, east, round):
             (1, 2),
             (1, 3),
             (1, 7),
-            (1, 8),
+            (1, 6),
             (2, 8),
             (3, 8),
             (6, 8),

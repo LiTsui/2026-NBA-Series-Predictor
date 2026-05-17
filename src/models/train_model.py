@@ -16,7 +16,7 @@ Predict playoff series outcomes based on validation data.
 Using the 80-10-10 rule:
   Training:   1996-2019 (23 years)
   Validation: 2020-2022 (3 years) — 2020 Bubble may skew results
-  Test:       2023-2025 (3 years)
+  Test:       2023-2024 (2 years)
 """
 
 
@@ -31,7 +31,7 @@ def train(model, train_loader, X_valid, y_valid):
     best_val_acc = 0  # find the best epoch for validation accuracy
 
     # repeats for a certain amount of epochs for the model to repeatedly adjust
-    for epoch in range(100):
+    for epoch in range(101):
         model.train()
         total_loss = 0  # error across all batches
         correct_train = 0
@@ -71,10 +71,12 @@ def train(model, train_loader, X_valid, y_valid):
             torch.save(model.state_dict(), "../data/model/best_model.pt")
 
         print(
-            f"Epoch {epoch + 1}/500 | Loss: {total_loss / len(train_loader):.4f} | Train Acc: {train_acc:.4f} | Val Acc: {val_acc:.4f}"
+            f"Epoch {epoch + 1}/100 | Loss: {total_loss / len(train_loader):.4f} | Train Acc: {train_acc:.4f} | Val Acc: {val_acc:.4f}"
         )
 
     print(f"\nBest Val Acc: {best_val_acc:.4f}")
+
+    return val_acc
 
 
 # helper function to find the best dropout value
@@ -87,8 +89,9 @@ def find_dropout(train_loader, X_valid, y_valid):
         results.append({"dropout": dropout, "val_acc": val_acc})
 
     df = pd.DataFrame(results)
-    print(ggplot(df, aes(x="dropout", y="val_acc")) + geom_line() + geom_point() + labs(
-        title="Dropout Rate vs Validation Accuracy", x="Dropout Rate", y="Validation Accuracy"))
+    p = ggplot(df, aes(x="dropout", y="val_acc")) + geom_line() + geom_point() + labs(
+        title="Dropout Rate vs Validation Accuracy", x="Dropout Rate", y="Validation Accuracy")
+    p.show()
 
 
 # helper function to find the best amount of neurons for linear layer #1
@@ -102,8 +105,9 @@ def find_neurons(train_loader, X_valid, y_valid):
         results.append({"neuron": neuron, "val_acc": val_acc})
 
     df = pd.DataFrame(results)
-    print(ggplot(df, aes(x="neuron", y="val_acc")) + geom_line() + geom_point() + labs(
-        title="Number of Neurons vs Validation Accuracy", x="Neurons", y="Validation Accuracy"))
+    p = ggplot(df, aes(x="neuron", y="val_acc")) + geom_line() + geom_point() + labs(
+        title="Number of Neurons vs Validation Accuracy for Layer 1", x="Neurons", y="Validation Accuracy")
+    p.show()
 
 
 def main():
@@ -161,8 +165,8 @@ def main():
 
     train(model, train_loader, X_valid, y_valid)
 
-    # h.find_dropout(train_loader, X_valid, y_valid)
-    # h.find_neurons(train_loader, X_valid, y_valid)
+    #find_dropout(train_loader, X_valid, y_valid)
+    #find_neurons(train_loader, X_valid, y_valid)
 
 
 if __name__ == "__main__":

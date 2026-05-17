@@ -364,7 +364,7 @@ def main():
             print(f"Adding {season} to Validation Data")
             valid_df = pd.concat([valid_df, matchup_data])
 
-        if i in range(2022, 2026):
+        if i in range(2022, 2025):
             print(f"Adding {season} to Test Data")
             test_df = pd.concat([test_df, matchup_data])
 
