@@ -192,6 +192,8 @@ Possible future improvements include:
 - Reduced feature redundancy
 - Uncertainty estimates for each series from repeated simulations
 - More interpretable models or feature analysis
+- Compare results with XGBoost's decision tree architecture
+- Consider K cross validation as an alternative to testing splits
 
 ---
 
