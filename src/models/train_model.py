@@ -41,7 +41,7 @@ def train(model, train_loader, X_valid, y_valid):
         # TRAINING DATA BATCHES
         for X_batch, y_batch in train_loader:
             optimizer.zero_grad()  # clear old gradients
-            noise = torch.randn_like(X_batch) * 0.05  # use noise to memorize patterns and not information
+            noise = torch.randn_like(X_batch) * 0.999  # use noise to memorize patterns and not information
             output = model(X_batch + noise)  # make predictions
             loss = criterion(output, y_batch)  # compute error between predicted and actual
             loss.backward()  # recompute gradients

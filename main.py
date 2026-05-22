@@ -95,10 +95,13 @@ def create_rows(conf, i, i2):
 def sim(model, scaler, data, STATS, finals):
     data[STATS] = scaler.transform(data[STATS])
     X_test = h.convert(data, STATS)
+
     with torch.no_grad():
-        preds = (model(X_test) >= 0.5).float()
-        # data['PROB'] = torch.sigmoid(model(X_test).squeeze()).cpu().numpy()
-        data["LABEL"] = preds
+        output = model(X_test)
+        prob = torch.sigmoid(output)
+        pred = (output >= 0.5).float()
+        data["LABEL"] = pred.cpu().numpy()
+        data["PROB"] = prob.cpu().numpy()
 
     data["WINNER_NAME"] = data.apply(
         lambda x: x["TEAM_HIGH_NAME"] if x["LABEL"] == 1 else x["TEAM_LOW_NAME"], axis=1
