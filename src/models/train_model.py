@@ -68,7 +68,7 @@ def train(model, train_loader, X_valid, y_valid):
         # save the model when trained at most accurate epoch
         if val_acc > best_val_acc:
             best_val_acc = val_acc
-            torch.save(model.state_dict(), "../data/model/best_model.pt")
+            torch.save(model.state_dict(), "../../model/best_model.pt")
 
         print(
             f"Epoch {epoch + 1}/100 | Loss: {total_loss / len(train_loader):.4f} | Train Acc: {train_acc:.4f} | Val Acc: {val_acc:.4f}"
@@ -111,8 +111,8 @@ def find_neurons(train_loader, X_valid, y_valid):
 
 
 def main():
-    train_df = pd.read_csv("../data/training.csv")
-    valid_df = pd.read_csv("../data/validation.csv")
+    train_df = pd.read_csv("../../data/processed/training.csv")
+    valid_df = pd.read_csv("../../data/processed/validation.csv")
 
     STATS = [
         "PointsPG_DIFF",
@@ -146,7 +146,7 @@ def main():
 
     # scales and transforms data to fit training data
     train_df[STATS] = scaler.fit_transform(train_df[STATS])
-    joblib.dump(scaler, "../data/model/scaler.pkl")
+    joblib.dump(scaler, "../../model/scaler.pkl")
 
     # transforms validation data using fitted scaler data
     valid_df[STATS] = scaler.transform(valid_df[STATS])

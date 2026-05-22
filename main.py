@@ -35,11 +35,11 @@ STATS = [
 ]
 
 playoff = pd.read_csv(
-    "../NBA_Series_Predictor/src/data/processed/playoff_teams/playoff_teams_25_26.csv"
+    "data/processed/playoff_teams/playoff_teams_25_26.csv"
 )
 
 reg = pd.read_csv(
-    "../NBA_Series_Predictor/src/data/processed/regular_season_matchups/regular_season_matchups_25_26.csv"
+    "data/processed/regular_season_matchups/regular_season_matchups_25_26.csv"
 )
 
 
@@ -280,7 +280,7 @@ def main():
     model = NeuralNet()
     model.load_state_dict(
         torch.load(
-            "/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/model/best_model.pt"
+            "model/best_model.pt"
         )
     )
 
@@ -289,7 +289,7 @@ def main():
 
     # load scaler to transform testing data
     scaler = joblib.load(
-        "/Users/Sean/PycharmProjects/NBA_Series_Predictor/src/data/model/scaler.pkl"
+        "model/scaler.pkl"
     )
 
     # first round

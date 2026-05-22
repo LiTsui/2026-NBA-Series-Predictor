@@ -95,9 +95,9 @@ def main():
         season = f"{str(i)[-2:]}_{str(i + 1)[-2:]}"  # follow format 00_01, 09_10
         print(f"Cleaning Data for {i}-{str(i + 1)[-2:]}")
 
-        standings = pd.read_csv(f"../data/raw/standings/standings_{season}.csv")
-        team_stats = pd.read_csv(f"../data/raw/team_stats/team_stats_{season}.csv")
-        game_logs = pd.read_csv(f"../data/raw/game_logs/game_logs_{season}.csv")
+        standings = pd.read_csv(f"../../data/raw/standings/standings_{season}.csv")
+        team_stats = pd.read_csv(f"../../data/raw/team_stats/team_stats_{season}.csv")
+        game_logs = pd.read_csv(f"../../data/raw/game_logs/game_logs_{season}.csv")
 
         # keeps all the relevant data necessary to draw conclusions team matchups
         playoff = clean_standings(standings, team_stats, season)
@@ -106,11 +106,11 @@ def main():
         matchups = h.clean_matchups(game_logs, playoff)
 
         playoff.to_csv(
-            f"../data/processed/playoff_teams/playoff_teams_{season}.csv",
+            f"../../data/processed/playoff_teams/playoff_teams_{season}.csv",
             index=False,
         )
         matchups.to_csv(
-            f"../data/processed/regular_season_matchups/regular_season_matchups_{season}.csv",
+            f"../../data/processed/regular_season_matchups/regular_season_matchups_{season}.csv",
             index=False,
         )
 

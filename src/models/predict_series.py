@@ -36,10 +36,10 @@ def main():
         "H2H_WIN_RATIO",
     ]
 
-    test_df = pd.read_csv("../data/testing.csv")
+    test_df = pd.read_csv("../../data/processed/testing.csv")
 
     # load scaler to transform testing data
-    scaler = joblib.load("../data/model/scaler.pkl")
+    scaler = joblib.load("../../model/scaler.pkl")
     test_df[STATS] = scaler.transform(test_df[STATS])
 
     X_test = h.convert(test_df, STATS)
@@ -47,7 +47,7 @@ def main():
 
     # load model data based on validation accuracy
     model = NeuralNet()
-    model.load_state_dict(torch.load("../data/model/best_model.pt"))
+    model.load_state_dict(torch.load("../../model/best_model.pt"))
 
     model.eval()
     with torch.no_grad():

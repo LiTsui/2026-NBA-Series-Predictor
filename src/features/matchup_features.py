@@ -206,10 +206,10 @@ def main():
 
         # read playoff matches history and playoff teams data
         games = pd.read_csv(
-            f"../data/raw/playoff_history/playoff_history_{read_season}.csv"
+            f"../../data/raw/playoff_history/playoff_history_{read_season}.csv"
         )
         playoff = pd.read_csv(
-            f"../data/processed/playoff_teams/playoff_teams_{read_season}.csv"
+            f"../../data/processed/playoff_teams/playoff_teams_{read_season}.csv"
         )
 
         cleaned_matchups = h.clean_matchups(games, playoff)
@@ -333,7 +333,7 @@ def main():
         # print(matchup_data.to_string())
 
         regular_season = pd.read_csv(
-            f"../data/processed/regular_season_matchups/regular_season_matchups_{read_season}.csv"
+            f"../../data/processed/regular_season_matchups/regular_season_matchups_{read_season}.csv"
         )
 
         matchup_data["SERIES_WINNER_H2H_WINS"] = matchup_data.apply(
@@ -352,7 +352,7 @@ def main():
         matchup_data["SEASON"] = season
 
         matchup_data.to_csv(
-            f"../data/processed/playoff_history_cleaned/playoff_history_cleaned_{read_season}.csv",
+            f"../../data/processed/playoff_history_cleaned/playoff_history_cleaned_{read_season}.csv",
             index=False,
         )
 
@@ -385,9 +385,9 @@ def main():
         lambda x: 1 if x["HIGHER_SEED"] == x["SERIES_WINNER"] else 0, axis=1
     )
 
-    train_df.to_csv(f"../data/training.csv", index=False)
-    valid_df.to_csv(f"../data/validation.csv", index=False)
-    test_df.to_csv(f"../data/testing.csv", index=False)
+    train_df.to_csv(f"../../data/training.csv", index=False)
+    valid_df.to_csv(f"../../data/validation.csv", index=False)
+    test_df.to_csv(f"../../data/testing.csv", index=False)
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ def load(season):
     # get league standings
     standings = leaguestandings.LeagueStandings(season=season).get_data_frames()[0]
     standings.to_csv(
-        f"../data/raw/standings/standings_{season[2:4]}_{season[-2:]}.csv",
+        f"../../data/raw/standings/standings_{season[2:4]}_{season[-2:]}.csv",
         index=False,
     )
 
@@ -24,7 +24,7 @@ def load(season):
         measure_type_detailed_defense="Advanced",
     ).get_data_frames()[0]
     team_stats.to_csv(
-        f"../data/raw/team_stats/team_stats_{season[2:4]}_{season[-2:]}.csv",
+        f"../../data/raw/team_stats/team_stats_{season[2:4]}_{season[-2:]}.csv",
         index=False,
     )
 
@@ -35,7 +35,7 @@ def load(season):
         player_or_team_abbreviation="T",  # team
     ).get_data_frames()[0]
     games.to_csv(
-        f"../data/raw/game_logs/game_logs_{season[2:4]}_{season[-2:]}.csv",
+        f"../../data/raw/game_logs/game_logs_{season[2:4]}_{season[-2:]}.csv",
         index=False,
     )
 
@@ -44,7 +44,7 @@ def load(season):
         season_nullable=season, league_id_nullable="00", season_type_nullable="Playoffs"
     ).get_data_frames()[0]
     playoff_df.to_csv(
-        f"../data/raw/playoff_history/playoff_history_{season[2:4]}_{season[-2:]}.csv",
+        f"../../data/raw/playoff_history/playoff_history_{season[2:4]}_{season[-2:]}.csv",
         index=False,
     )
 
