@@ -1,2 +1,5 @@
 .venv/
 .idea/
+.processed/
+data/raw/
+data/processed/
