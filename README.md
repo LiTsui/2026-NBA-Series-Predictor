@@ -130,9 +130,9 @@ These features are designed to capture statistical comparisons between matched u
 
 ## How to run the project
 
-### Reloading the data 
+### Loading the data 
 
-If the stored data is corrupted, run the scripts in this order:
+Run the scripts in this order:
 
 1. `load_data.py`
 2. `clean_data.py`
