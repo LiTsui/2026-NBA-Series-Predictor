@@ -23,7 +23,7 @@ Implemented the system to simulate each round of the 2026 NBA Playoffs
 ---
 
 ## **Project Overview**  
-The NBA Series Predictor uses historical playoff game data and regular season team statistics to create matchup features and train a model capable of predicting which team will win the 2026 playoffs. The model will only use playoff data starting from 1996 since 1996 was the start of the "play by play era"; an era in which real-time statistics are measured game by game. 
+The NBA Series Predictor uses historical playoff game data and regular season team statistics from the NBA API to create matchup features and train a model capable of predicting which team will win the 2026 playoffs. The model will only use playoff data starting from 1996 since 1996 was the start of the "play by play era"; an era in which real-time statistics are measured game by game. 
 
 The data has been partitioned into three datasets for model training. 
 - The training dataset will use matchups from 1996 - 2019
@@ -112,7 +112,7 @@ The final stage simulates the 2026 NBA playoffs round by round. After each round
 
 ***
 
-## Feature set
+## Features
 
 The model uses matchup-difference features instead of team stats.
 
@@ -202,4 +202,3 @@ Possible future improvements include:
 This project is focused on playoff **series** prediction, not single-game prediction. A team winning one game in a series does not imply that it will win the full series.
 
 The model does not account for the Play-In Tournament. The project begins once the seeds for the playoffs are already known.
-
